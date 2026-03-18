@@ -1,1 +1,66 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 @import "@computo/ui/globals.css";
+
+:root {
+  --computo-bg: #0a0e14;
+  --computo-surface: #0f1419;
+  --computo-panel: #151b23;
+  --computo-card: #1a222c;
+  --computo-border: #2d3a4a;
+  --computo-text: #e6edf5;
+  --computo-muted: #8b98a8;
+}
+
+.dark .computo-shell {
+  --computo-bg: #0a0e14;
+  --computo-surface: #0f1419;
+  --computo-panel: #151b23;
+  --computo-card: #1a222c;
+  --computo-border: #2d3a4a;
+  --computo-text: #e6edf5;
+  --computo-muted: #8b98a8;
+}
+
+.computo-shell {
+  font-family: "Space Grotesk", "Inter Variable", sans-serif;
+  background:
+    radial-gradient(ellipse at 45% 0%, rgb(16 185 129 / 6%), transparent 45%),
+    radial-gradient(ellipse at 100% 100%, rgb(59 130 246 / 6%), transparent 40%), var(--computo-bg);
+  color: var(--computo-text);
+}
+
+.computo-header {
+  background: color-mix(in oklab, var(--computo-surface) 94%, black);
+  border-color: var(--computo-border);
+}
+
+.computo-panel {
+  background: color-mix(in oklab, var(--computo-surface) 92%, black);
+  border-color: var(--computo-border);
+}
+
+.computo-canvas {
+  background:
+    linear-gradient(rgb(45 58 74 / 20%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(45 58 74 / 20%) 1px, transparent 1px), var(--computo-surface);
+  background-size: 20px 20px;
+}
+
+.computo-input {
+  border: 1px solid var(--computo-border);
+  background: color-mix(in oklab, var(--computo-panel) 90%, black);
+  color: var(--computo-text);
+}
+
+.computo-input:focus-visible {
+  outline: 2px solid rgb(16 185 129 / 50%);
+  outline-offset: 2px;
+}
+
+.react-flow__attribution {
+  opacity: 0.55;
+}
+
+.react-flow__node {
+  font-family: "JetBrains Mono", monospace;
+}
