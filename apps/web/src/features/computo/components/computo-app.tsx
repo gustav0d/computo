@@ -71,7 +71,9 @@ const nodeTypes = {
 
     return (
       <div className="relative">
-        {data.isInitial ? <div className="absolute -left-8 top-1/2 text-xs text-slate-400">→</div> : null}
+        {data.isInitial ? (
+          <div className="absolute -left-8 top-1/2 text-xs text-slate-400">→</div>
+        ) : null}
         <div
           className={`grid size-14 place-items-center rounded-full border-2 bg-slate-900 text-sm font-semibold text-slate-100 ${borderClass} ${ringClass}`}
         >
@@ -96,7 +98,9 @@ const nodeTypes = {
     return (
       <div className={`min-w-40 rounded-md border px-2 py-1 text-xs ${statusClass}`}>
         <div className="font-semibold">{data.label}</div>
-        {data.stack.length > 0 ? <div className="mt-1 text-[10px]">Pilha: {data.stack.join(" ")}</div> : null}
+        {data.stack.length > 0 ? (
+          <div className="mt-1 text-[10px]">Pilha: {data.stack.join(" ")}</div>
+        ) : null}
       </div>
     );
   },
@@ -150,23 +154,26 @@ function useBranchFlow(branchTree: BranchTree | null) {
       } satisfies Node<BranchNodeData>;
     });
 
-    const edges = branchTree.edges.map((edge) => ({
-      id: edge.id,
-      source: edge.source,
-      target: edge.target,
-      label: edge.label,
-      animated: false,
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-        color: "#94a3b8",
-      },
-      style: {
-        stroke: "#64748b",
-      },
-      labelStyle: {
-        fontSize: 10,
-      },
-    } satisfies Edge));
+    const edges = branchTree.edges.map(
+      (edge) =>
+        ({
+          id: edge.id,
+          source: edge.source,
+          target: edge.target,
+          label: edge.label,
+          animated: false,
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            color: "#94a3b8",
+          },
+          style: {
+            stroke: "#64748b",
+          },
+          labelStyle: {
+            fontSize: 10,
+          },
+        }) satisfies Edge,
+    );
 
     return { nodes, edges };
   }, [branchTree]);
@@ -215,7 +222,9 @@ function ComputoAppInner() {
   const startSimulation = useComputoStore((state) => state.startSimulation);
   const stepSimulation = useComputoStore((state) => state.stepSimulation);
 
-  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance<any, any> | null>(null);
+  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance<any, any> | null>(
+    null,
+  );
   const [stateEditor, setStateEditor] = useState({ id: "", isInitial: false, isAccepting: false });
   const [transitionEditor, setTransitionEditor] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -250,7 +259,13 @@ function ComputoAppInner() {
     return () => {
       clearTimeout(timeout);
     };
-  }, [simulation.accepted, simulation.history.length, simulation.running, simulation.speed, stepSimulation]);
+  }, [
+    simulation.accepted,
+    simulation.history.length,
+    simulation.running,
+    simulation.speed,
+    stepSimulation,
+  ]);
 
   const selectedState = useMemo(
     () => automaton.states.find((state) => state.id === editingStateId) ?? null,
@@ -441,16 +456,19 @@ function ComputoAppInner() {
     [graphNodes, moveState],
   );
 
-  const onEdgesChange = useCallback<OnEdgesChange<Edge>>((changes) => {
-    const removed = applyEdgeChanges(changes, graphEdges);
-    const removedIds = graphEdges
-      .filter((edge) => removed.find((candidate) => candidate.id === edge.id) === undefined)
-      .map((edge) => edge.id);
+  const onEdgesChange = useCallback<OnEdgesChange<Edge>>(
+    (changes) => {
+      const removed = applyEdgeChanges(changes, graphEdges);
+      const removedIds = graphEdges
+        .filter((edge) => removed.find((candidate) => candidate.id === edge.id) === undefined)
+        .map((edge) => edge.id);
 
-    for (const id of removedIds) {
-      deleteTransition(id);
-    }
-  }, [deleteTransition, graphEdges]);
+      for (const id of removedIds) {
+        deleteTransition(id);
+      }
+    },
+    [deleteTransition, graphEdges],
+  );
 
   const onConnect = useCallback(
     (connection: Connection) => {
@@ -576,7 +594,9 @@ function ComputoAppInner() {
       <main className="grid h-[calc(100%-56px)] grid-cols-[18rem_1fr_22rem]">
         <aside className="computo-panel border-r p-3">
           <section className="mb-4 rounded-md border border-slate-700/70 bg-slate-900/80 p-3">
-            <h3 className="mb-3 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">Ferramentas</h3>
+            <h3 className="mb-3 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
+              Ferramentas
+            </h3>
             <div className="grid grid-cols-2 gap-2">
               <Button
                 variant={toolMode === "state" ? "default" : "outline"}
@@ -619,7 +639,9 @@ function ComputoAppInner() {
           </section>
 
           <section className="mb-4 rounded-md border border-slate-700/70 bg-slate-900/80 p-3">
-            <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">Definição Formal</h3>
+            <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
+              Definição Formal
+            </h3>
             <div className="space-y-1 font-mono text-xs text-slate-200">
               {formalLines.map((line) => (
                 <div key={line}>{line}</div>
@@ -628,7 +650,9 @@ function ComputoAppInner() {
           </section>
 
           <section className="mb-4 overflow-auto rounded-md border border-slate-700/70 bg-slate-900/80 p-3">
-            <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">Tabela de Transições</h3>
+            <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
+              Tabela de Transições
+            </h3>
             {automaton.transitions.length === 0 ? (
               <p className="text-xs text-slate-500">Nenhuma transição definida.</p>
             ) : automaton.type === "DFA" || automaton.type === "NFA" ? (
@@ -646,15 +670,23 @@ function ComputoAppInner() {
                 <tbody>
                   {automaton.states.map((state) => (
                     <tr key={state.id}>
-                      <td className="border border-slate-700 px-2 py-1 font-semibold">{state.id}</td>
+                      <td className="border border-slate-700 px-2 py-1 font-semibold">
+                        {state.id}
+                      </td>
                       {transitionTableSymbols.map((symbol) => {
                         const search = symbol === "ε" ? "" : symbol;
                         const targets = automaton.transitions
-                          .filter((transition) => transition.from === state.id && transition.input === search)
+                          .filter(
+                            (transition) =>
+                              transition.from === state.id && transition.input === search,
+                          )
                           .map((transition) => transition.to)
                           .join(", ");
                         return (
-                          <td key={`${state.id}:${symbol}`} className="border border-slate-700 px-2 py-1 text-center">
+                          <td
+                            key={`${state.id}:${symbol}`}
+                            className="border border-slate-700 px-2 py-1 text-center"
+                          >
                             {targets || "-"}
                           </td>
                         );
@@ -666,11 +698,16 @@ function ComputoAppInner() {
             ) : (
               <div className="space-y-2 text-xs">
                 {automaton.transitions.map((transition) => (
-                  <div key={transition.id} className="rounded border border-slate-700 bg-slate-950/80 px-2 py-1">
+                  <div
+                    key={transition.id}
+                    className="rounded border border-slate-700 bg-slate-950/80 px-2 py-1"
+                  >
                     <div className="font-semibold">
                       {transition.from} → {transition.to}
                     </div>
-                    <div className="font-mono text-slate-300">{getTransitionLabel(automaton.type, transition)}</div>
+                    <div className="font-mono text-slate-300">
+                      {getTransitionLabel(automaton.type, transition)}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -678,7 +715,9 @@ function ComputoAppInner() {
           </section>
 
           <section className="rounded-md border border-slate-700/70 bg-slate-900/80 p-3 text-xs">
-            <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">Propriedades</h3>
+            <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
+              Propriedades
+            </h3>
             <div className="flex items-center justify-between">
               <span className="text-slate-400">Estados</span>
               <span className="font-mono">{automaton.states.length}</span>
@@ -725,7 +764,9 @@ function ComputoAppInner() {
               >
                 <RotateCcw />
               </Button>
-              <span className="pl-1 font-mono text-xs text-slate-400">{Math.round(zoom * 100)}%</span>
+              <span className="pl-1 font-mono text-xs text-slate-400">
+                {Math.round(zoom * 100)}%
+              </span>
             </div>
             <label className="flex items-center gap-2 text-xs text-slate-300">
               <input
@@ -790,7 +831,9 @@ function ComputoAppInner() {
             <div className="border-t border-slate-700/70 p-3">
               {automaton.type === "PDA" ? (
                 <div>
-                  <div className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">Pilha</div>
+                  <div className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
+                    Pilha
+                  </div>
                   {simulation.pdaConfigurations[0]?.stack.length ? (
                     <div className="flex flex-wrap gap-1">
                       {[...simulation.pdaConfigurations[0].stack].reverse().map((symbol, index) => (
@@ -803,19 +846,25 @@ function ComputoAppInner() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-xs text-slate-500">Pilha será exibida durante a simulação.</p>
+                    <p className="text-xs text-slate-500">
+                      Pilha será exibida durante a simulação.
+                    </p>
                   )}
                 </div>
               ) : (
                 <div>
                   <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
                     <span>Fita</span>
-                    {automaton.type === "LBA" ? <span className="text-emerald-400">(limitada)</span> : null}
+                    {automaton.type === "LBA" ? (
+                      <span className="text-emerald-400">(limitada)</span>
+                    ) : null}
                   </div>
                   {tapeWindow.length > 0 ? (
                     <div className="flex items-center gap-1 overflow-x-auto pb-1">
                       {automaton.type === "LBA" ? (
-                        <span className="rounded border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-400">⊢</span>
+                        <span className="rounded border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-400">
+                          ⊢
+                        </span>
                       ) : null}
                       {tapeWindow.map((cell) => (
                         <div
@@ -830,7 +879,9 @@ function ComputoAppInner() {
                         </div>
                       ))}
                       {automaton.type === "LBA" ? (
-                        <span className="rounded border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-400">⊣</span>
+                        <span className="rounded border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-400">
+                          ⊣
+                        </span>
                       ) : null}
                     </div>
                   ) : (
@@ -844,7 +895,9 @@ function ComputoAppInner() {
 
         <aside className="computo-panel border-l p-3">
           <section className="mb-3 rounded-md border border-slate-700/70 bg-slate-900/80 p-3">
-            <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">Simulação</h3>
+            <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
+              Simulação
+            </h3>
             <div className="space-y-2">
               <div className="flex gap-2">
                 <Input
@@ -932,14 +985,19 @@ function ComputoAppInner() {
                 <p className="text-slate-500">Nenhuma simulação executada.</p>
               ) : (
                 simulation.history.map((entry) => (
-                  <div key={`history-${entry.step}`} className="rounded border border-slate-700 bg-slate-950/70 p-2">
+                  <div
+                    key={`history-${entry.step}`}
+                    className="rounded border border-slate-700 bg-slate-950/70 p-2"
+                  >
                     <div className="flex items-center justify-between text-[10px] text-slate-400">
                       <span>Passo {entry.step}</span>
                       <span>{entry.transitionLabel}</span>
                     </div>
                     <div className="mt-1 text-slate-200">Estado: {entry.stateLabel}</div>
                     {automaton.type === "PDA" ? (
-                      <div className="mt-1 text-[10px] text-slate-400">Pilha: {entry.stack.join(" ") || "∅"}</div>
+                      <div className="mt-1 text-[10px] text-slate-400">
+                        Pilha: {entry.stack.join(" ") || "∅"}
+                      </div>
                     ) : null}
                     {automaton.type === "TM" || automaton.type === "LBA" ? (
                       <div className="mt-1 text-[10px] text-slate-400">
@@ -952,7 +1010,8 @@ function ComputoAppInner() {
             </div>
           </section>
 
-          {(automaton.type === "NFA" || automaton.type === "PDA") && simulation.branchTree !== null ? (
+          {(automaton.type === "NFA" || automaton.type === "PDA") &&
+          simulation.branchTree !== null ? (
             <section className="mb-3 rounded-md border border-slate-700/70 bg-slate-900/80 p-3">
               <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
                 Árvore de Computação
@@ -974,20 +1033,26 @@ function ComputoAppInner() {
                 />
               </div>
               {simulation.branchTree.truncated ? (
-                <p className="mt-2 text-[10px] text-yellow-300">Árvore truncada pelo limite de expansão.</p>
+                <p className="mt-2 text-[10px] text-yellow-300">
+                  Árvore truncada pelo limite de expansão.
+                </p>
               ) : null}
             </section>
           ) : null}
 
           {selectedState ? (
             <section className="rounded-md border border-slate-700/70 bg-slate-900/80 p-3">
-              <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">Editor de Estado</h3>
+              <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
+                Editor de Estado
+              </h3>
               <div className="space-y-2 text-xs">
                 <label className="space-y-1">
                   <span className="text-slate-400">Identificador</span>
                   <Input
                     value={stateEditor.id}
-                    onChange={(event) => setStateEditor((prev) => ({ ...prev, id: event.target.value }))}
+                    onChange={(event) =>
+                      setStateEditor((prev) => ({ ...prev, id: event.target.value }))
+                    }
                     className="h-8"
                   />
                 </label>
@@ -1063,7 +1128,9 @@ function ComputoAppInner() {
                   className="rounded-md border border-slate-700 bg-slate-950/80 p-3 text-left transition-colors hover:border-emerald-400/70"
                   onClick={() => loadExample(example.id)}
                 >
-                  <div className={`text-[11px] font-semibold uppercase ${MACHINE_ACCENT_CLASS[example.type]}`}>
+                  <div
+                    className={`text-[11px] font-semibold uppercase ${MACHINE_ACCENT_CLASS[example.type]}`}
+                  >
                     {example.type}
                   </div>
                   <div className="mt-1 font-semibold text-slate-100">{example.name}</div>
@@ -1088,7 +1155,9 @@ function ComputoAppInner() {
                 <span className="text-slate-400">Símbolo de entrada</span>
                 <Input
                   value={transitionEditor.input ?? ""}
-                  onChange={(event) => setTransitionEditor((prev) => ({ ...prev, input: event.target.value }))}
+                  onChange={(event) =>
+                    setTransitionEditor((prev) => ({ ...prev, input: event.target.value }))
+                  }
                   className="h-8"
                 />
               </label>

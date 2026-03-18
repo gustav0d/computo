@@ -22,7 +22,9 @@ export function stepTm(
   const symbol = configuration.tape[configuration.head] ?? options.blankSymbol;
   const transitions = automaton.transitions.filter(
     (transition): transition is TmTransition =>
-      transition.kind === "TM" && transition.from === configuration.state && transition.input === symbol,
+      transition.kind === "TM" &&
+      transition.from === configuration.state &&
+      transition.input === symbol,
   );
 
   const transition = transitions[0];

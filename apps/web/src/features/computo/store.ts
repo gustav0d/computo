@@ -62,7 +62,10 @@ interface ComputoStore {
   setMachineType: (type: MachineType) => void;
   addState: (x: number, y: number) => void;
   moveState: (stateId: string, x: number, y: number) => void;
-  updateState: (stateId: string, payload: { id: string; isInitial: boolean; isAccepting: boolean }) => void;
+  updateState: (
+    stateId: string,
+    payload: { id: string; isInitial: boolean; isAccepting: boolean },
+  ) => void;
   deleteState: (stateId: string) => void;
   addTransition: (from: string, to: string) => void;
   updateTransition: (transitionId: string, payload: Record<string, string>) => void;
@@ -261,7 +264,8 @@ export const useComputoStore = create<ComputoStore>((set, get) => ({
   updateState: (stateId, payload) =>
     set((state) => {
       const hasIdCollision =
-        payload.id !== stateId && state.automaton.states.some((candidate) => candidate.id === payload.id);
+        payload.id !== stateId &&
+        state.automaton.states.some((candidate) => candidate.id === payload.id);
 
       if (hasIdCollision) {
         return {
@@ -322,7 +326,9 @@ export const useComputoStore = create<ComputoStore>((set, get) => ({
       );
 
       const nextInitial =
-        state.automaton.initialState === stateId ? (states[0]?.id ?? null) : state.automaton.initialState;
+        state.automaton.initialState === stateId
+          ? (states[0]?.id ?? null)
+          : state.automaton.initialState;
 
       const automaton = withRecomputedAlphabet(
         ensureSingleInitialState(
@@ -419,7 +425,9 @@ export const useComputoStore = create<ComputoStore>((set, get) => ({
     set((state) => ({
       automaton: withRecomputedAlphabet({
         ...state.automaton,
-        transitions: state.automaton.transitions.filter((transition) => transition.id !== transitionId),
+        transitions: state.automaton.transitions.filter(
+          (transition) => transition.id !== transitionId,
+        ),
       }),
       selectedTransitionId: null,
       editingTransitionId: null,
@@ -427,7 +435,11 @@ export const useComputoStore = create<ComputoStore>((set, get) => ({
     })),
 
   openTransitionEditor: (transitionId) =>
-    set(() => ({ showTransitionModal: true, editingTransitionId: transitionId, selectedTransitionId: transitionId })),
+    set(() => ({
+      showTransitionModal: true,
+      editingTransitionId: transitionId,
+      selectedTransitionId: transitionId,
+    })),
 
   closeTransitionEditor: () =>
     set(() => ({
@@ -664,7 +676,9 @@ export const useComputoStore = create<ComputoStore>((set, get) => ({
       });
 
       simulation.pdaConfigurations = result.nextConfigurations;
-      simulation.currentStates = Array.from(new Set(result.nextConfigurations.map((config) => config.state)));
+      simulation.currentStates = Array.from(
+        new Set(result.nextConfigurations.map((config) => config.state)),
+      );
       simulation.lastTransitionIds = result.transitionIds;
 
       const maxIndex = result.nextConfigurations.reduce(
@@ -713,7 +727,13 @@ export const useComputoStore = create<ComputoStore>((set, get) => ({
     const stateLabel = simulation.currentStates.join(", ") || "-";
     simulation.history = [
       ...simulation.history,
-      buildHistoryEntry(state.automaton, simulation.history.length + 1, stateLabel, transitionId, simulation),
+      buildHistoryEntry(
+        state.automaton,
+        simulation.history.length + 1,
+        stateLabel,
+        transitionId,
+        simulation,
+      ),
     ];
 
     set(() => ({ simulation }));

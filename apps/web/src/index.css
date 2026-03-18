@@ -25,8 +25,7 @@
   font-family: "Space Grotesk", "Inter Variable", sans-serif;
   background:
     radial-gradient(ellipse at 45% 0%, rgb(16 185 129 / 6%), transparent 45%),
-    radial-gradient(ellipse at 100% 100%, rgb(59 130 246 / 6%), transparent 40%),
-    var(--computo-bg);
+    radial-gradient(ellipse at 100% 100%, rgb(59 130 246 / 6%), transparent 40%), var(--computo-bg);
   color: var(--computo-text);
 }
 
@@ -43,8 +42,7 @@
 .computo-canvas {
   background:
     linear-gradient(rgb(45 58 74 / 20%) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(45 58 74 / 20%) 1px, transparent 1px),
-    var(--computo-surface);
+    linear-gradient(90deg, rgb(45 58 74 / 20%) 1px, transparent 1px), var(--computo-surface);
   background-size: 20px 20px;
 }
 

@@ -78,7 +78,11 @@ export function buildComputationTree(
   return treeFromEmpty();
 }
 
-function buildNfaTree(automaton: AutomatonDefinition, input: string, limits: SimulationLimits): BranchTree {
+function buildNfaTree(
+  automaton: AutomatonDefinition,
+  input: string,
+  limits: SimulationLimits,
+): BranchTree {
   const root = createNode("n0", null, 0, automaton.initialState ?? "", 0);
   const nodes: BranchTreeNode[] = [root];
   const edges: BranchTreeEdge[] = [];
@@ -228,7 +232,11 @@ function pdaApplyTransition(queueItem: PdaQueueItem, transition: PdaTransition) 
   };
 }
 
-function buildPdaTree(automaton: AutomatonDefinition, input: string, limits: SimulationLimits): BranchTree {
+function buildPdaTree(
+  automaton: AutomatonDefinition,
+  input: string,
+  limits: SimulationLimits,
+): BranchTree {
   const root = createNode("p0", null, 0, automaton.initialState ?? "", 0);
   root.stack = [automaton.initialStackSymbol];
 
@@ -286,7 +294,9 @@ function buildPdaTree(automaton: AutomatonDefinition, input: string, limits: Sim
       continue;
     }
 
-    const applicable = transitions.filter((transition) => pdaTransitionApplies(transition, current, input));
+    const applicable = transitions.filter((transition) =>
+      pdaTransitionApplies(transition, current, input),
+    );
 
     if (applicable.length === 0) {
       node.status = "rejected";
@@ -306,7 +316,13 @@ function buildPdaTree(automaton: AutomatonDefinition, input: string, limits: Sim
       const childId = `p${nodeCounter}`;
       nodeCounter += 1;
 
-      const child = createNode(childId, current.nodeId, current.depth + 1, next.state, next.inputIndex);
+      const child = createNode(
+        childId,
+        current.nodeId,
+        current.depth + 1,
+        next.state,
+        next.inputIndex,
+      );
       child.stack = next.stack;
       child.transitionId = transition.id;
 

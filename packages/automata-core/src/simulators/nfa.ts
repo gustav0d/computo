@@ -48,7 +48,9 @@ export function stepNfa(automaton: AutomatonDefinition, input: NfaStepInput): Nf
 
   const symbol = input.input[input.inputIndex] ?? "";
   const transitions = closure.flatMap((state) =>
-    automaton.transitions.filter((transition) => transition.from === state && transition.input === symbol),
+    automaton.transitions.filter(
+      (transition) => transition.from === state && transition.input === symbol,
+    ),
   );
 
   if (transitions.length === 0) {

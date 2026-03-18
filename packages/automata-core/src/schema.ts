@@ -97,26 +97,28 @@ function normalizeStateInitialFlags(
   initialState: string | null,
 ): z.infer<typeof stateSchema>[] {
   let initialAssigned = false;
-  return states.map((state) => {
-    const isInitial = initialState !== null && state.id === initialState;
-    if (isInitial) {
-      initialAssigned = true;
-    }
-    return {
-      ...state,
-      isInitial,
-    };
-  }).map((state, index) => {
-    if (initialAssigned || index !== 0 || state.id.length === 0) {
-      return state;
-    }
+  return states
+    .map((state) => {
+      const isInitial = initialState !== null && state.id === initialState;
+      if (isInitial) {
+        initialAssigned = true;
+      }
+      return {
+        ...state,
+        isInitial,
+      };
+    })
+    .map((state, index) => {
+      if (initialAssigned || index !== 0 || state.id.length === 0) {
+        return state;
+      }
 
-    initialAssigned = true;
-    return {
-      ...state,
-      isInitial: true,
-    };
-  });
+      initialAssigned = true;
+      return {
+        ...state,
+        isInitial: true,
+      };
+    });
 }
 
 function inferAlphabets(type: MachineType, transitions: TransitionDefinition[]) {
@@ -181,7 +183,9 @@ export function createInitialAutomaton(type: MachineType = "DFA"): AutomatonDefi
 
 export function normalizeAutomaton(rawData: unknown): AutomatonDefinition {
   const parsed = automatonSchema.parse(rawData);
-  const transitions = parsed.transitions.map((transition, index) => toTransition(parsed.type, transition, index));
+  const transitions = parsed.transitions.map((transition, index) =>
+    toTransition(parsed.type, transition, index),
+  );
 
   const inferred = inferAlphabets(parsed.type, transitions);
   const initialState = parsed.initialState ?? inferInitialState(parsed.states);
@@ -193,8 +197,12 @@ export function normalizeAutomaton(rawData: unknown): AutomatonDefinition {
     states,
     transitions,
     alphabet: dedupe(parsed.alphabet.length > 0 ? parsed.alphabet : inferred.alphabet),
-    tapeAlphabet: dedupe(parsed.tapeAlphabet.length > 0 ? parsed.tapeAlphabet : inferred.tapeAlphabet),
-    stackAlphabet: dedupe(parsed.stackAlphabet.length > 0 ? parsed.stackAlphabet : inferred.stackAlphabet),
+    tapeAlphabet: dedupe(
+      parsed.tapeAlphabet.length > 0 ? parsed.tapeAlphabet : inferred.tapeAlphabet,
+    ),
+    stackAlphabet: dedupe(
+      parsed.stackAlphabet.length > 0 ? parsed.stackAlphabet : inferred.stackAlphabet,
+    ),
     initialState,
     initialStackSymbol: parsed.initialStackSymbol,
     blankSymbol: parsed.blankSymbol,

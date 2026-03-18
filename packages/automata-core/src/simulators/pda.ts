@@ -79,7 +79,9 @@ export function stepPda(automaton: AutomatonDefinition, input: PdaStepInput): Pd
   }
 
   if (allNext.length === 0) {
-    const accepted = input.configurations.some((config) => isAccepting(automaton, config, input.input));
+    const accepted = input.configurations.some((config) =>
+      isAccepting(automaton, config, input.input),
+    );
     return {
       nextConfigurations: input.configurations,
       transitionIds: [],
@@ -89,10 +91,12 @@ export function stepPda(automaton: AutomatonDefinition, input: PdaStepInput): Pd
   }
 
   const deduped = Array.from(
-    allNext.reduce((map, config) => {
-      map.set(configurationKey(config), config);
-      return map;
-    }, new Map<string, PdaConfiguration>()).values(),
+    allNext
+      .reduce((map, config) => {
+        map.set(configurationKey(config), config);
+        return map;
+      }, new Map<string, PdaConfiguration>())
+      .values(),
   );
 
   const accepted = deduped.some((config) => isAccepting(automaton, config, input.input));

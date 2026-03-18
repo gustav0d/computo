@@ -22,6 +22,7 @@ bun build            # Build all packages via Turborepo
 ```
 
 To run a command scoped to a single package, use Turborepo filter:
+
 ```bash
 bun turbo -F <package-name> <task>
 # e.g.: bun turbo -F web build

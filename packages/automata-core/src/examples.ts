@@ -138,9 +138,7 @@ const examplesSeed: Array<Omit<AutomataExample, "automaton"> & { automaton: unkn
         { id: "q0", x: 240, y: 220, isInitial: true, isAccepting: false },
         { id: "q_accept", x: 520, y: 220, isInitial: false, isAccepting: true },
       ],
-      transitions: [
-        { id: "t1", from: "q0", to: "q_accept", input: "B", write: "B", move: "S" },
-      ],
+      transitions: [{ id: "t1", from: "q0", to: "q_accept", input: "B", write: "B", move: "S" }],
       alphabet: ["a", "b", "c"],
       tapeAlphabet: ["a", "b", "c", "X", "Y", "Z", "B"],
       initialState: "q0",

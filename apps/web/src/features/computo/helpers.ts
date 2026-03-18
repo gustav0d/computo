@@ -1,4 +1,8 @@
-import type { AutomatonDefinition, MachineType, TransitionDefinition } from "@computo/automata-core";
+import type {
+  AutomatonDefinition,
+  MachineType,
+  TransitionDefinition,
+} from "@computo/automata-core";
 
 export const MACHINE_TYPE_OPTIONS: Array<{ value: MachineType; label: string }> = [
   { value: "DFA", label: "DFA — Autômato Finito Determinístico" },
