@@ -1,0 +1,28 @@
+{
+  "name": "@computo/db",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {
+    "db:start": "docker compose up -d",
+    "db:watch": "docker compose up",
+    "db:stop": "docker compose stop",
+    "db:down": "docker compose down"
+  },
+  "dependencies": {
+    "@computo/env": "workspace:*",
+    "dotenv": "catalog:",
+    "mongoose": "^8.14.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@computo/config": "workspace:*",
+    "typescript": "^5"
+  }
+}
