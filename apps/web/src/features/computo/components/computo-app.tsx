@@ -72,7 +72,16 @@ const nodeTypes = {
     return (
       <div className="relative">
         {data.isInitial ? (
-          <div className="absolute -left-8 top-1/2 text-xs text-slate-400">→</div>
+          <svg
+            className="pointer-events-none absolute -left-8 top-1/2 -translate-y-1/2"
+            width="32"
+            height="16"
+            viewBox="0 0 32 16"
+            fill="none"
+          >
+            <line x1="0" y1="8" x2="22" y2="8" stroke="#64748b" strokeWidth="2" />
+            <polyline points="14,3 24,8 14,13" stroke="#64748b" strokeWidth="2" strokeLinejoin="round" fill="none" />
+          </svg>
         ) : null}
         <div
           className={`grid size-14 place-items-center rounded-full border-2 bg-slate-900 text-sm font-semibold text-slate-100 ${borderClass} ${ringClass}`}
@@ -529,7 +538,7 @@ function ComputoAppInner() {
             <Bot className="size-5 text-emerald-400" />
             <span className="text-lg font-semibold tracking-tight">Computo</span>
           </div>
-          <div className="h-6 w-px bg-slate-700" />
+          <div className="h-6 w-px bg-computo-border" />
           <select
             className="computo-input h-9 min-w-80 rounded-md px-2 text-xs"
             value={automaton.type}
@@ -593,8 +602,8 @@ function ComputoAppInner() {
 
       <main className="grid h-[calc(100%-56px)] grid-cols-[18rem_1fr_22rem]">
         <aside className="computo-panel border-r p-3">
-          <section className="mb-4 rounded-md border border-slate-700/70 bg-slate-900/80 p-3">
-            <h3 className="mb-3 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
+          <section className="mb-4 rounded-md border border-computo-border bg-computo-card p-3">
+            <h3 className="mb-3 text-[11px] font-semibold tracking-[0.08em] text-computo-muted uppercase">
               Ferramentas
             </h3>
             <div className="grid grid-cols-2 gap-2">
@@ -635,33 +644,33 @@ function ComputoAppInner() {
                 Deletar
               </Button>
             </div>
-            <p className="mt-3 text-[11px] text-slate-500">Atalhos: 1/2/3/4, Delete e Esc.</p>
+            <p className="mt-3 text-[11px] text-computo-muted">Atalhos: 1/2/3/4, Delete e Esc.</p>
           </section>
 
-          <section className="mb-4 rounded-md border border-slate-700/70 bg-slate-900/80 p-3">
-            <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
+          <section className="mb-4 rounded-md border border-computo-border bg-computo-card p-3">
+            <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-computo-muted uppercase">
               Definição Formal
             </h3>
-            <div className="space-y-1 font-mono text-xs text-slate-200">
+            <div className="space-y-1 font-mono text-xs text-computo-text">
               {formalLines.map((line) => (
                 <div key={line}>{line}</div>
               ))}
             </div>
           </section>
 
-          <section className="mb-4 overflow-auto rounded-md border border-slate-700/70 bg-slate-900/80 p-3">
-            <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
+          <section className="mb-4 overflow-auto rounded-md border border-computo-border bg-computo-card p-3">
+            <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-computo-muted uppercase">
               Tabela de Transições
             </h3>
             {automaton.transitions.length === 0 ? (
-              <p className="text-xs text-slate-500">Nenhuma transição definida.</p>
+              <p className="text-xs text-computo-muted">Nenhuma transição definida.</p>
             ) : automaton.type === "DFA" || automaton.type === "NFA" ? (
               <table className="w-full border-collapse text-xs">
                 <thead>
                   <tr>
-                    <th className="border border-slate-700 px-2 py-1 text-left">δ</th>
+                    <th className="border border-computo-border px-2 py-1 text-left">δ</th>
                     {transitionTableSymbols.map((symbol) => (
-                      <th key={symbol} className="border border-slate-700 px-2 py-1 text-center">
+                      <th key={symbol} className="border border-computo-border px-2 py-1 text-center">
                         {symbol}
                       </th>
                     ))}
@@ -670,7 +679,7 @@ function ComputoAppInner() {
                 <tbody>
                   {automaton.states.map((state) => (
                     <tr key={state.id}>
-                      <td className="border border-slate-700 px-2 py-1 font-semibold">
+                      <td className="border border-computo-border px-2 py-1 font-semibold">
                         {state.id}
                       </td>
                       {transitionTableSymbols.map((symbol) => {
@@ -685,7 +694,7 @@ function ComputoAppInner() {
                         return (
                           <td
                             key={`${state.id}:${symbol}`}
-                            className="border border-slate-700 px-2 py-1 text-center"
+                            className="border border-computo-border px-2 py-1 text-center"
                           >
                             {targets || "-"}
                           </td>
@@ -700,12 +709,12 @@ function ComputoAppInner() {
                 {automaton.transitions.map((transition) => (
                   <div
                     key={transition.id}
-                    className="rounded border border-slate-700 bg-slate-950/80 px-2 py-1"
+                    className="rounded border border-computo-border bg-slate-950/80 px-2 py-1"
                   >
                     <div className="font-semibold">
                       {transition.from} → {transition.to}
                     </div>
-                    <div className="font-mono text-slate-300">
+                    <div className="font-mono text-computo-text">
                       {getTransitionLabel(automaton.type, transition)}
                     </div>
                   </div>
@@ -714,27 +723,27 @@ function ComputoAppInner() {
             )}
           </section>
 
-          <section className="rounded-md border border-slate-700/70 bg-slate-900/80 p-3 text-xs">
-            <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
+          <section className="rounded-md border border-computo-border bg-computo-card p-3 text-xs">
+            <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-computo-muted uppercase">
               Propriedades
             </h3>
             <div className="flex items-center justify-between">
-              <span className="text-slate-400">Estados</span>
+              <span className="text-computo-muted">Estados</span>
               <span className="font-mono">{automaton.states.length}</span>
             </div>
             <div className="mt-1 flex items-center justify-between">
-              <span className="text-slate-400">Transições</span>
+              <span className="text-computo-muted">Transições</span>
               <span className="font-mono">{automaton.transitions.length}</span>
             </div>
             <div className="mt-1 flex items-center justify-between">
-              <span className="text-slate-400">Alfabeto</span>
+              <span className="text-computo-muted">Alfabeto</span>
               <span className="font-mono">{`{${automaton.alphabet.join(", ")}}`}</span>
             </div>
           </section>
         </aside>
 
         <section className="computo-canvas flex min-h-0 flex-col">
-          <div className="flex h-12 items-center justify-between border-b border-slate-700/70 px-3">
+          <div className="flex h-12 items-center justify-between border-b border-computo-border px-3">
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
@@ -764,11 +773,11 @@ function ComputoAppInner() {
               >
                 <RotateCcw />
               </Button>
-              <span className="pl-1 font-mono text-xs text-slate-400">
+              <span className="pl-1 font-mono text-xs text-computo-muted">
                 {Math.round(zoom * 100)}%
               </span>
             </div>
-            <label className="flex items-center gap-2 text-xs text-slate-300">
+            <label className="flex items-center gap-2 text-xs text-computo-text">
               <input
                 type="checkbox"
                 checked={snapToGrid}
@@ -821,17 +830,17 @@ function ComputoAppInner() {
               <Controls />
             </ReactFlow>
             {automaton.states.length === 0 ? (
-              <div className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-md border border-slate-700 bg-slate-900/90 px-3 py-2 text-xs text-slate-300">
+              <div className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-md border border-computo-border bg-computo-card px-3 py-2 text-xs text-computo-text">
                 Clique no canvas para adicionar estados.
               </div>
             ) : null}
           </div>
 
           {(automaton.type === "TM" || automaton.type === "LBA" || automaton.type === "PDA") && (
-            <div className="border-t border-slate-700/70 p-3">
+            <div className="border-t border-computo-border p-3">
               {automaton.type === "PDA" ? (
                 <div>
-                  <div className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
+                  <div className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-computo-muted uppercase">
                     Pilha
                   </div>
                   {simulation.pdaConfigurations[0]?.stack.length ? (
@@ -839,21 +848,21 @@ function ComputoAppInner() {
                       {[...simulation.pdaConfigurations[0].stack].reverse().map((symbol, index) => (
                         <span
                           key={`${symbol}:${index}`}
-                          className="rounded border border-slate-700 bg-slate-900 px-2 py-1 font-mono text-xs"
+                          className="rounded border border-computo-border bg-slate-900 px-2 py-1 font-mono text-xs"
                         >
                           {symbol}
                         </span>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-computo-muted">
                       Pilha será exibida durante a simulação.
                     </p>
                   )}
                 </div>
               ) : (
                 <div>
-                  <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
+                  <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold tracking-[0.08em] text-computo-muted uppercase">
                     <span>Fita</span>
                     {automaton.type === "LBA" ? (
                       <span className="text-emerald-400">(limitada)</span>
@@ -862,30 +871,29 @@ function ComputoAppInner() {
                   {tapeWindow.length > 0 ? (
                     <div className="flex items-center gap-1 overflow-x-auto pb-1">
                       {automaton.type === "LBA" ? (
-                        <span className="rounded border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-400">
+                        <span className="rounded border border-computo-border bg-slate-900 px-2 py-1 text-xs text-computo-muted">
                           ⊢
                         </span>
                       ) : null}
                       {tapeWindow.map((cell) => (
                         <div
                           key={cell.absoluteIndex}
-                          className={`grid min-w-10 place-items-center rounded border px-2 py-2 font-mono text-xs ${
-                            cell.head
+                          className={`grid min-w-10 place-items-center rounded border px-2 py-2 font-mono text-xs ${cell.head
                               ? "border-emerald-400 bg-emerald-500/15 text-emerald-200"
-                              : "border-slate-700 bg-slate-900 text-slate-200"
-                          }`}
+                              : "border-computo-border bg-slate-900 text-computo-text"
+                            }`}
                         >
                           {cell.value || automaton.blankSymbol}
                         </div>
                       ))}
                       {automaton.type === "LBA" ? (
-                        <span className="rounded border border-slate-700 bg-slate-900 px-2 py-1 text-xs text-slate-400">
+                        <span className="rounded border border-computo-border bg-slate-900 px-2 py-1 text-xs text-computo-muted">
                           ⊣
                         </span>
                       ) : null}
                     </div>
                   ) : (
-                    <p className="text-xs text-slate-500">Fita será exibida durante a simulação.</p>
+                    <p className="text-xs text-computo-muted">Fita será exibida durante a simulação.</p>
                   )}
                 </div>
               )}
@@ -894,8 +902,8 @@ function ComputoAppInner() {
         </section>
 
         <aside className="computo-panel border-l p-3">
-          <section className="mb-3 rounded-md border border-slate-700/70 bg-slate-900/80 p-3">
-            <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
+          <section className="mb-3 rounded-md border border-computo-border bg-computo-card p-3">
+            <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-computo-muted uppercase">
               Simulação
             </h3>
             <div className="space-y-2">
@@ -946,7 +954,7 @@ function ComputoAppInner() {
               </div>
 
               <div>
-                <label className="mb-1 flex items-center gap-1 text-xs text-slate-400">
+                <label className="mb-1 flex items-center gap-1 text-xs text-computo-muted">
                   <Clock3 className="size-3" />
                   Velocidade
                 </label>
@@ -963,44 +971,43 @@ function ComputoAppInner() {
           </section>
 
           {simulation.accepted !== null ? (
-            <section className="mb-3 rounded-md border border-slate-700/70 bg-slate-900/80 p-3">
+            <section className="mb-3 rounded-md border border-computo-border bg-computo-card p-3">
               <div
-                className={`rounded-md border px-3 py-2 text-center text-sm font-semibold ${
-                  simulation.accepted
+                className={`rounded-md border px-3 py-2 text-center text-sm font-semibold ${simulation.accepted
                     ? "border-green-500/60 bg-green-500/15 text-green-300"
                     : "border-red-500/60 bg-red-500/15 text-red-300"
-                }`}
+                  }`}
               >
                 {simulation.accepted ? "ACEITO" : "REJEITADO"}
               </div>
             </section>
           ) : null}
 
-          <section className="mb-3 min-h-0 rounded-md border border-slate-700/70 bg-slate-900/80 p-3">
-            <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
+          <section className="mb-3 min-h-0 rounded-md border border-computo-border bg-computo-card p-3">
+            <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-computo-muted uppercase">
               Histórico de Computação
             </h3>
             <div className="max-h-44 space-y-1 overflow-auto pr-1 text-xs">
               {simulation.history.length === 0 ? (
-                <p className="text-slate-500">Nenhuma simulação executada.</p>
+                <p className="text-computo-muted">Nenhuma simulação executada.</p>
               ) : (
                 simulation.history.map((entry) => (
                   <div
                     key={`history-${entry.step}`}
-                    className="rounded border border-slate-700 bg-slate-950/70 p-2"
+                    className="rounded border border-computo-border bg-computo-bg/70 p-2"
                   >
-                    <div className="flex items-center justify-between text-[10px] text-slate-400">
+                    <div className="flex items-center justify-between text-[10px] text-computo-muted">
                       <span>Passo {entry.step}</span>
                       <span>{entry.transitionLabel}</span>
                     </div>
-                    <div className="mt-1 text-slate-200">Estado: {entry.stateLabel}</div>
+                    <div className="mt-1 text-computo-text">Estado: {entry.stateLabel}</div>
                     {automaton.type === "PDA" ? (
-                      <div className="mt-1 text-[10px] text-slate-400">
+                      <div className="mt-1 text-[10px] text-computo-muted">
                         Pilha: {entry.stack.join(" ") || "∅"}
                       </div>
                     ) : null}
                     {automaton.type === "TM" || automaton.type === "LBA" ? (
-                      <div className="mt-1 text-[10px] text-slate-400">
+                      <div className="mt-1 text-[10px] text-computo-muted">
                         Cabeça: {entry.tapeHead} | {entry.tape.slice(0, 12).join(" ")}
                       </div>
                     ) : null}
@@ -1011,12 +1018,12 @@ function ComputoAppInner() {
           </section>
 
           {(automaton.type === "NFA" || automaton.type === "PDA") &&
-          simulation.branchTree !== null ? (
-            <section className="mb-3 rounded-md border border-slate-700/70 bg-slate-900/80 p-3">
-              <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
+            simulation.branchTree !== null ? (
+            <section className="mb-3 rounded-md border border-computo-border bg-computo-card p-3">
+              <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-computo-muted uppercase">
                 Árvore de Computação
               </h3>
-              <div className="h-52 overflow-hidden rounded border border-slate-700">
+              <div className="h-52 overflow-hidden rounded border border-computo-border">
                 <ReactFlow
                   nodes={branchFlow.nodes}
                   edges={branchFlow.edges}
@@ -1041,13 +1048,13 @@ function ComputoAppInner() {
           ) : null}
 
           {selectedState ? (
-            <section className="rounded-md border border-slate-700/70 bg-slate-900/80 p-3">
-              <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-slate-400 uppercase">
+            <section className="rounded-md border border-computo-border bg-computo-card p-3">
+              <h3 className="mb-2 text-[11px] font-semibold tracking-[0.08em] text-computo-muted uppercase">
                 Editor de Estado
               </h3>
               <div className="space-y-2 text-xs">
                 <label className="space-y-1">
-                  <span className="text-slate-400">Identificador</span>
+                  <span className="text-computo-muted">Identificador</span>
                   <Input
                     value={stateEditor.id}
                     onChange={(event) =>
@@ -1104,7 +1111,7 @@ function ComputoAppInner() {
               </div>
             </section>
           ) : (
-            <section className="rounded-md border border-slate-700/70 bg-slate-900/80 p-3 text-xs text-slate-500">
+            <section className="rounded-md border border-computo-border bg-computo-card p-3 text-xs text-computo-muted">
               Selecione um estado para editar.
             </section>
           )}
@@ -1113,7 +1120,7 @@ function ComputoAppInner() {
 
       {showExamplesModal ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/80 backdrop-blur-sm">
-          <div className="w-full max-w-3xl rounded-lg border border-slate-700 bg-slate-900 p-4">
+          <div className="w-full max-w-3xl rounded-lg border border-computo-border bg-computo-card p-4">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-lg font-semibold">Biblioteca de Exemplos</h2>
               <Button size="icon-sm" variant="outline" onClick={closeExamples}>
@@ -1125,7 +1132,7 @@ function ComputoAppInner() {
                 <button
                   key={example.id}
                   type="button"
-                  className="rounded-md border border-slate-700 bg-slate-950/80 p-3 text-left transition-colors hover:border-emerald-400/70"
+                  className="rounded-md border border-computo-border bg-slate-950/80 p-3 text-left transition-colors hover:border-emerald-400/70"
                   onClick={() => loadExample(example.id)}
                 >
                   <div
@@ -1134,7 +1141,7 @@ function ComputoAppInner() {
                     {example.type}
                   </div>
                   <div className="mt-1 font-semibold text-slate-100">{example.name}</div>
-                  <p className="mt-1 text-xs text-slate-400">{example.description}</p>
+                  <p className="mt-1 text-xs text-computo-muted">{example.description}</p>
                 </button>
               ))}
             </div>
@@ -1144,15 +1151,15 @@ function ComputoAppInner() {
 
       {showTransitionModal && selectedTransition ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/80 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-lg border border-slate-700 bg-slate-900 p-4">
+          <div className="w-full max-w-md rounded-lg border border-computo-border bg-computo-card p-4">
             <h2 className="mb-2 text-lg font-semibold">Editar Transição</h2>
-            <p className="mb-3 text-xs text-slate-400">
+            <p className="mb-3 text-xs text-computo-muted">
               {selectedTransition.from} → {selectedTransition.to}
             </p>
 
             <div className="space-y-2 text-xs">
               <label className="space-y-1">
-                <span className="text-slate-400">Símbolo de entrada</span>
+                <span className="text-computo-muted">Símbolo de entrada</span>
                 <Input
                   value={transitionEditor.input ?? ""}
                   onChange={(event) =>
@@ -1165,7 +1172,7 @@ function ComputoAppInner() {
               {selectedTransition.kind === "PDA" ? (
                 <>
                   <label className="space-y-1">
-                    <span className="text-slate-400">Pop</span>
+                    <span className="text-computo-muted">Pop</span>
                     <Input
                       value={transitionEditor.pop ?? ""}
                       onChange={(event) =>
@@ -1178,7 +1185,7 @@ function ComputoAppInner() {
                     />
                   </label>
                   <label className="space-y-1">
-                    <span className="text-slate-400">Push</span>
+                    <span className="text-computo-muted">Push</span>
                     <Input
                       value={transitionEditor.push ?? ""}
                       onChange={(event) =>
@@ -1196,7 +1203,7 @@ function ComputoAppInner() {
               {selectedTransition.kind === "TM" ? (
                 <>
                   <label className="space-y-1">
-                    <span className="text-slate-400">Símbolo escrito</span>
+                    <span className="text-computo-muted">Símbolo escrito</span>
                     <Input
                       value={transitionEditor.write ?? ""}
                       onChange={(event) =>
@@ -1209,7 +1216,7 @@ function ComputoAppInner() {
                     />
                   </label>
                   <label className="space-y-1">
-                    <span className="text-slate-400">Direção</span>
+                    <span className="text-computo-muted">Direção</span>
                     <select
                       className="computo-input h-8 w-full rounded-md px-2"
                       value={transitionEditor.move ?? "R"}
