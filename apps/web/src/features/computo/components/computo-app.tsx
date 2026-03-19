@@ -709,7 +709,7 @@ function ComputoAppInner() {
                 {automaton.transitions.map((transition) => (
                   <div
                     key={transition.id}
-                    className="rounded border border-computo-border bg-slate-950/80 px-2 py-1"
+                    className="rounded border border-computo-border bg-computo-bg px-2 py-1"
                   >
                     <div className="font-semibold">
                       {transition.from} → {transition.to}
@@ -848,7 +848,7 @@ function ComputoAppInner() {
                       {[...simulation.pdaConfigurations[0].stack].reverse().map((symbol, index) => (
                         <span
                           key={`${symbol}:${index}`}
-                          className="rounded border border-computo-border bg-slate-900 px-2 py-1 font-mono text-xs"
+                          className="rounded border border-computo-border bg-computo-card px-2 py-1 font-mono text-xs"
                         >
                           {symbol}
                         </span>
@@ -871,7 +871,7 @@ function ComputoAppInner() {
                   {tapeWindow.length > 0 ? (
                     <div className="flex items-center gap-1 overflow-x-auto pb-1">
                       {automaton.type === "LBA" ? (
-                        <span className="rounded border border-computo-border bg-slate-900 px-2 py-1 text-xs text-computo-muted">
+                        <span className="rounded border border-computo-border bg-computo-card px-2 py-1 text-xs text-computo-muted">
                           ⊢
                         </span>
                       ) : null}
@@ -880,14 +880,14 @@ function ComputoAppInner() {
                           key={cell.absoluteIndex}
                           className={`grid min-w-10 place-items-center rounded border px-2 py-2 font-mono text-xs ${cell.head
                               ? "border-emerald-400 bg-emerald-500/15 text-emerald-200"
-                              : "border-computo-border bg-slate-900 text-computo-text"
+                              : "border-computo-border bg-computo-card text-computo-text"
                             }`}
                         >
                           {cell.value || automaton.blankSymbol}
                         </div>
                       ))}
                       {automaton.type === "LBA" ? (
-                        <span className="rounded border border-computo-border bg-slate-900 px-2 py-1 text-xs text-computo-muted">
+                        <span className="rounded border border-computo-border bg-computo-card px-2 py-1 text-xs text-computo-muted">
                           ⊣
                         </span>
                       ) : null}
@@ -1132,7 +1132,7 @@ function ComputoAppInner() {
                 <button
                   key={example.id}
                   type="button"
-                  className="rounded-md border border-computo-border bg-slate-950/80 p-3 text-left transition-colors hover:border-emerald-400/70"
+                  className="rounded-md border border-computo-border bg-computo-bg p-3 text-left transition-colors hover:border-emerald-400/70"
                   onClick={() => loadExample(example.id)}
                 >
                   <div
@@ -1140,7 +1140,7 @@ function ComputoAppInner() {
                   >
                     {example.type}
                   </div>
-                  <div className="mt-1 font-semibold text-slate-100">{example.name}</div>
+                  <div className="mt-1 font-semibold text-computo-text">{example.name}</div>
                   <p className="mt-1 text-xs text-computo-muted">{example.description}</p>
                 </button>
               ))}
