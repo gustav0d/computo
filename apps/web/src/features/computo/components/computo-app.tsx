@@ -6,12 +6,14 @@ import {
   type Connection,
   Controls,
   type Edge,
+  Handle,
   MarkerType,
   MiniMap,
   type Node,
   type NodeProps,
   type OnEdgesChange,
   type OnNodesChange,
+  Position,
   type ReactFlowInstance,
   ReactFlow,
   ReactFlowProvider,
@@ -74,9 +76,17 @@ const nodeTypes = {
   stateNode: function StateNode({ data, selected }: NodeProps<Node<StateNodeData>>) {
     const ringClass = data.active ? "ring-2 ring-emerald-400/70" : "";
     const borderClass = selected ? "border-emerald-400" : "border-slate-500/60";
+    const hiddenHandleStyle = {
+      opacity: 0,
+      width: 12,
+      height: 12,
+      background: "transparent",
+      border: "none",
+    } as const;
 
     return (
       <div className="relative">
+        <Handle type="target" position={Position.Left} style={hiddenHandleStyle} />
         {data.isInitial ? (
           <InitialStateArrow
             className="pointer-events-none absolute -left-8 top-1/2 -translate-y-1/2 text-computo-muted"
@@ -92,6 +102,7 @@ const nodeTypes = {
         {data.isAccepting ? (
           <div className="pointer-events-none absolute left-1/2 top-1/2 size-11 -translate-x-1/2 -translate-y-1/2 rounded-full border border-slate-200/80" />
         ) : null}
+        <Handle type="source" position={Position.Right} style={hiddenHandleStyle} />
       </div>
     );
   },
@@ -390,6 +401,8 @@ function ComputoAppInner() {
           x: state.x ?? 160,
           y: state.y ?? 160,
         },
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
         data: {
           id: state.id,
           isInitial: state.isInitial,
