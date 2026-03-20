@@ -54,6 +54,7 @@ import { flowColors } from "../theme";
 import { useTheme } from "@/components/theme-provider";
 
 import { InitialStateArrow } from "./initial-state-arrow";
+import { SelfLoopEdge } from "./self-loop-edge";
 
 import "@xyflow/react/dist/style.css";
 
@@ -89,9 +90,9 @@ const nodeTypes = {
         <Handle type="target" position={Position.Left} style={hiddenHandleStyle} />
         {data.isInitial ? (
           <InitialStateArrow
-            className="pointer-events-none absolute -left-8 top-1/2 -translate-y-1/2 text-computo-muted"
-            width="32"
-            height="16"
+            className="pointer-events-none absolute -left-[13px] top-1/2 -translate-y-1/2 text-computo-muted"
+            width="12"
+            height="12"
           />
         ) : null}
         <div
@@ -125,6 +126,10 @@ const nodeTypes = {
       </div>
     );
   },
+};
+
+const edgeTypes = {
+  selfLoop: SelfLoopEdge,
 };
 
 function buildTransitionTable(type: MachineType, symbols: string[]) {
@@ -427,16 +432,22 @@ function ComputoAppInner() {
     const edges: Edge[] = [];
 
     for (const bucket of grouped.values()) {
-      for (const transition of bucket) {
+      for (const [index, transition] of bucket.entries()) {
         const active = simulation.lastTransitionIds.includes(transition.id);
+        const isSelfLoop = transition.from === transition.to;
 
         edges.push({
           id: transition.id,
           source: transition.from,
           target: transition.to,
-          type: "smoothstep",
+          type: isSelfLoop ? "selfLoop" : "smoothstep",
           animated: active,
           label: getTransitionLabel(automaton.type, transition),
+          data: isSelfLoop
+            ? {
+                loopIndex: index,
+              }
+            : undefined,
           markerEnd: {
             type: MarkerType.ArrowClosed,
             color: active ? flowPalette.markerActive : flowPalette.markerDefault,
@@ -453,6 +464,9 @@ function ComputoAppInner() {
             fill: flowPalette.edgeLabelBg,
             fillOpacity: 0.85,
           },
+          labelShowBg: true,
+          labelBgPadding: [6, 2],
+          labelBgBorderRadius: 4,
           selected: selectedTransitionId === transition.id,
         });
       }
@@ -820,6 +834,7 @@ function ComputoAppInner() {
               nodes={graphNodes}
               edges={graphEdges}
               nodeTypes={nodeTypes}
+              edgeTypes={edgeTypes}
               colorMode={flowColorMode}
               onInit={(instance) => {
                 setReactFlowInstance(instance);
