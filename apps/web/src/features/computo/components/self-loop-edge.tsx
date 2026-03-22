@@ -67,8 +67,7 @@ export function SelfLoopEdge({
         ? `M ${sx} ${sourceY} C ${rightX} ${sourceY}, ${rightX} ${targetY}, ${tx} ${targetY}`
         : `M ${sourceX} ${sy} C ${sourceX} ${topY}, ${targetX} ${topY}, ${targetX} ${ty}`;
 
-  const labelX =
-    loopSide === "right" ? rightX + LABEL_OFFSET : (sourceX + targetX) / 2;
+  const labelX = loopSide === "right" ? rightX + LABEL_OFFSET : (sourceX + targetX) / 2;
   const labelY =
     loopSide === "bottom"
       ? bottomY + LABEL_OFFSET

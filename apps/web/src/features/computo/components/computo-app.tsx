@@ -54,7 +54,7 @@ import { selectTransitionById, useComputoStore } from "../store";
 import { flowColors } from "../theme";
 import { useBranchFlow } from "../use-branch-flow";
 
-import { BranchNode, type BranchNodeData } from "./branch-node";
+import { BranchNode } from "./branch-node";
 import { SelfLoopEdge } from "./self-loop-edge";
 import { StateNode, type StateNodeData } from "./state-node";
 
