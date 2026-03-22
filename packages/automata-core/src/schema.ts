@@ -22,6 +22,8 @@ const rawTransitionSchema = z.object({
   from: z.string().min(1),
   to: z.string().min(1),
   input: z.string().default(""),
+  sourceHandle: z.string().nullable().optional(),
+  targetHandle: z.string().nullable().optional(),
   pop: z.string().optional(),
   push: z.string().optional(),
   write: z.string().optional(),
@@ -51,6 +53,8 @@ function toTransition(type: MachineType, raw: z.infer<typeof rawTransitionSchema
       from: raw.from,
       to: raw.to,
       input: raw.input ?? "",
+      sourceHandle: raw.sourceHandle ?? undefined,
+      targetHandle: raw.targetHandle ?? undefined,
       pop: raw.pop ?? "",
       push: raw.push ?? "",
     };
@@ -64,6 +68,8 @@ function toTransition(type: MachineType, raw: z.infer<typeof rawTransitionSchema
       from: raw.from,
       to: raw.to,
       input: raw.input ?? "",
+      sourceHandle: raw.sourceHandle ?? undefined,
+      targetHandle: raw.targetHandle ?? undefined,
       write: raw.write ?? "",
       move: raw.move ?? "R",
     };
@@ -76,6 +82,8 @@ function toTransition(type: MachineType, raw: z.infer<typeof rawTransitionSchema
     from: raw.from,
     to: raw.to,
     input: raw.input ?? "",
+    sourceHandle: raw.sourceHandle ?? undefined,
+    targetHandle: raw.targetHandle ?? undefined,
   };
   return transition;
 }

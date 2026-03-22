@@ -22,6 +22,7 @@ import type {
 } from "@computo/automata-core";
 import { create } from "zustand";
 
+import { resolveCreatedTransitionHandles } from "./edge-routing";
 import { createTransitionTemplate, snapValue } from "./helpers";
 
 export type ToolMode = "state" | "transition" | "select" | "delete";
@@ -67,7 +68,12 @@ interface ComputoStore {
     payload: { id: string; isInitial: boolean; isAccepting: boolean },
   ) => void;
   deleteState: (stateId: string) => void;
-  addTransition: (from: string, to: string) => void;
+  addTransition: (
+    from: string,
+    to: string,
+    sourceHandle?: string | null,
+    targetHandle?: string | null,
+  ) => void;
   updateTransition: (transitionId: string, payload: Record<string, string>) => void;
   deleteTransition: (transitionId: string) => void;
   openTransitionEditor: (transitionId: string) => void;
@@ -350,7 +356,7 @@ export const useComputoStore = create<ComputoStore>((set, get) => ({
       };
     }),
 
-  addTransition: (from, to) =>
+  addTransition: (from, to, sourceHandle, targetHandle) =>
     set((state) => {
       if (state.automaton.type === "DFA") {
         const hasConnection = state.automaton.transitions.some(
@@ -364,7 +370,17 @@ export const useComputoStore = create<ComputoStore>((set, get) => ({
       }
 
       const transitionId = nextTransitionId(state.automaton);
-      const transition = createTransitionTemplate(state.automaton.type, from, to, transitionId);
+      const handles = resolveCreatedTransitionHandles(state.automaton.transitions, from, to, {
+        sourceHandle,
+        targetHandle,
+      });
+      const transition = createTransitionTemplate(
+        state.automaton.type,
+        from,
+        to,
+        transitionId,
+        handles,
+      );
 
       const automaton = withRecomputedAlphabet({
         ...state.automaton,

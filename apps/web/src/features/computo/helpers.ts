@@ -4,6 +4,8 @@ import type {
   TransitionDefinition,
 } from "@computo/automata-core";
 
+import type { TransitionHandleSelection } from "./edge-routing";
+
 export const MACHINE_TYPE_OPTIONS: Array<{ value: MachineType; label: string }> = [
   { value: "DFA", label: "DFA — Autômato Finito Determinístico" },
   { value: "NFA", label: "NFA — Autômato Finito Não-Determinístico" },
@@ -47,14 +49,26 @@ export function snapValue(value: number, gridSize: number, enabled: boolean) {
   return Math.round(value / gridSize) * gridSize;
 }
 
-export function createTransitionTemplate(type: MachineType, from: string, to: string, id: string) {
+export function createTransitionTemplate(
+  type: MachineType,
+  from: string,
+  to: string,
+  id: string,
+  handles: TransitionHandleSelection = {},
+) {
+  const baseTransition = {
+    id,
+    from,
+    to,
+    input: "",
+    sourceHandle: handles.sourceHandle ?? undefined,
+    targetHandle: handles.targetHandle ?? undefined,
+  };
+
   if (type === "PDA") {
     return {
-      id,
+      ...baseTransition,
       kind: "PDA" as const,
-      from,
-      to,
-      input: "",
       pop: "",
       push: "",
     };
@@ -62,22 +76,16 @@ export function createTransitionTemplate(type: MachineType, from: string, to: st
 
   if (type === "TM" || type === "LBA") {
     return {
-      id,
+      ...baseTransition,
       kind: "TM" as const,
-      from,
-      to,
-      input: "",
       write: "",
       move: "R" as const,
     };
   }
 
   return {
-    id,
+    ...baseTransition,
     kind: "FA" as const,
-    from,
-    to,
-    input: "",
   };
 }
 
