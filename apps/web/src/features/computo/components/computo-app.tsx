@@ -326,6 +326,7 @@ function ComputoAppInner() {
           data: isSelfLoop
             ? {
                 loopTier: route.loopTier,
+                loopSide: "loopSide" in route ? route.loopSide : "top",
               }
             : undefined,
           markerEnd: {

@@ -19,7 +19,7 @@ const HIDDEN_HANDLE_STYLE = {
   border: "none",
 } as const;
 
-const TOP_HANDLE_VISIBLE_STYLE = {
+const VISIBLE_HANDLE_STYLE = {
   width: 10,
   height: 10,
   borderRadius: "999px",
@@ -28,12 +28,69 @@ const TOP_HANDLE_VISIBLE_STYLE = {
   boxShadow: "0 0 0 3px rgba(15, 23, 42, 0.5)",
 } as const;
 
+/** Matches `size-14` state circle: handles sit on the rim, not on the box top edge. */
+const STATE_NODE_BOX_PX = 56;
+
+function rimTopPxForHandleLeft(left: string): number {
+  const pct = Number.parseFloat(left) / 100;
+  const cx = STATE_NODE_BOX_PX / 2;
+  const r = STATE_NODE_BOX_PX / 2;
+  const x = pct * STATE_NODE_BOX_PX;
+  const inner = r * r - (x - cx) ** 2;
+  if (inner <= 0) {
+    return 0;
+  }
+  return cx - Math.sqrt(inner);
+}
+
+function rimBottomPxForHandleLeft(left: string): number {
+  const pct = Number.parseFloat(left) / 100;
+  const cx = STATE_NODE_BOX_PX / 2;
+  const r = STATE_NODE_BOX_PX / 2;
+  const x = pct * STATE_NODE_BOX_PX;
+  const inner = r * r - (x - cx) ** 2;
+  if (inner <= 0) {
+    return STATE_NODE_BOX_PX;
+  }
+  return cx + Math.sqrt(inner);
+}
+
+function rimRightPxForHandleTop(top: string): number {
+  const pct = Number.parseFloat(top) / 100;
+  const cy = STATE_NODE_BOX_PX / 2;
+  const r = STATE_NODE_BOX_PX / 2;
+  const y = pct * STATE_NODE_BOX_PX;
+  const inner = r * r - (y - cy) ** 2;
+  if (inner <= 0) {
+    return STATE_NODE_BOX_PX;
+  }
+  return cy + Math.sqrt(inner);
+}
+
 function topHandleStyle(left: string, show: boolean) {
   return {
-    ...(show ? TOP_HANDLE_VISIBLE_STYLE : HIDDEN_HANDLE_STYLE),
+    ...(show ? VISIBLE_HANDLE_STYLE : HIDDEN_HANDLE_STYLE),
     left,
-    top: -5,
-    transform: "translateX(-50%)",
+    top: rimTopPxForHandleLeft(left),
+    transform: "translate(-50%, -50%)",
+  } as const;
+}
+
+function rightHandleStyle(top: string, show: boolean) {
+  return {
+    ...(show ? VISIBLE_HANDLE_STYLE : HIDDEN_HANDLE_STYLE),
+    top,
+    left: rimRightPxForHandleTop(top),
+    transform: "translate(-50%, -50%)",
+  } as const;
+}
+
+function bottomHandleStyle(left: string, show: boolean) {
+  return {
+    ...(show ? VISIBLE_HANDLE_STYLE : HIDDEN_HANDLE_STYLE),
+    left,
+    top: rimBottomPxForHandleLeft(left),
+    transform: "translate(-50%, -50%)",
   } as const;
 }
 
@@ -66,6 +123,18 @@ export function StateNode({ data, selected }: NodeProps<Node<StateNodeData>>) {
         type="target"
         position={Position.Top}
         style={topHandleStyle("76%", data.showTransitionHandles)}
+      />
+      <Handle
+        id={HANDLE_IDS.targetRight}
+        type="target"
+        position={Position.Right}
+        style={rightHandleStyle("62%", data.showTransitionHandles)}
+      />
+      <Handle
+        id={HANDLE_IDS.targetBottom}
+        type="target"
+        position={Position.Bottom}
+        style={bottomHandleStyle("38%", data.showTransitionHandles)}
       />
       {data.isInitial ? (
         <InitialStateArrow
@@ -104,7 +173,13 @@ export function StateNode({ data, selected }: NodeProps<Node<StateNodeData>>) {
         id={HANDLE_IDS.sourceRight}
         type="source"
         position={Position.Right}
-        style={HIDDEN_HANDLE_STYLE}
+        style={rightHandleStyle("38%", data.showTransitionHandles)}
+      />
+      <Handle
+        id={HANDLE_IDS.sourceBottom}
+        type="source"
+        position={Position.Bottom}
+        style={bottomHandleStyle("62%", data.showTransitionHandles)}
       />
     </div>
   );
