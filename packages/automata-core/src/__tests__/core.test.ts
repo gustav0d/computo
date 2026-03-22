@@ -30,6 +30,44 @@ describe("schema", () => {
     const result = parseAutomatonJson("{");
     expect(result.success).toBe(false);
   });
+
+  test("preserves transition handle metadata when present", () => {
+    const automaton = normalizeAutomaton({
+      type: "NFA",
+      states: [
+        { id: "q0", isInitial: true, isAccepting: false },
+        { id: "q1", isInitial: false, isAccepting: true },
+      ],
+      transitions: [
+        {
+          from: "q0",
+          to: "q1",
+          input: "a",
+          sourceHandle: "source-top-center",
+          targetHandle: "target-top-left",
+        },
+      ],
+      initialState: "q0",
+    });
+
+    expect(automaton.transitions[0]?.sourceHandle).toBe("source-top-center");
+    expect(automaton.transitions[0]?.targetHandle).toBe("target-top-left");
+  });
+
+  test("accepts legacy transitions without handle metadata", () => {
+    const automaton = normalizeAutomaton({
+      type: "DFA",
+      states: [
+        { id: "q0", isInitial: true, isAccepting: false },
+        { id: "q1", isInitial: false, isAccepting: true },
+      ],
+      transitions: [{ from: "q0", to: "q1", input: "a" }],
+      initialState: "q0",
+    });
+
+    expect(automaton.transitions[0]?.sourceHandle).toBeUndefined();
+    expect(automaton.transitions[0]?.targetHandle).toBeUndefined();
+  });
 });
 
 describe("dfa", () => {

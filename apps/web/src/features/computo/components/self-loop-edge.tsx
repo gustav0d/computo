@@ -1,16 +1,14 @@
 import { BaseEdge, type Edge, type EdgeProps } from "@xyflow/react";
 
 type SelfLoopEdgeData = {
-  loopIndex?: number;
+  loopTier?: number;
 };
 
 export type SelfLoopEdgeType = Edge<SelfLoopEdgeData, "selfLoop">;
 
-const BASE_LOOP_HEIGHT = 52;
-const LOOP_SPACING = 24;
+const BASE_LOOP_HEIGHT = 44;
+const LOOP_TIER_SPACING = 36;
 const LABEL_OFFSET = 12;
-const LOOP_ANCHOR_OFFSET_X = 18;
-const LOOP_ANCHOR_OFFSET_Y = 18;
 
 export function SelfLoopEdge({
   data,
@@ -29,17 +27,12 @@ export function SelfLoopEdge({
   targetX,
   targetY,
 }: EdgeProps<SelfLoopEdgeType>) {
-  const loopIndex = data?.loopIndex ?? 0;
-  const centerX = (sourceX + targetX) / 2;
-  const centerY = (sourceY + targetY) / 2;
-  const loopHeight = BASE_LOOP_HEIGHT + loopIndex * LOOP_SPACING;
-  const topY = centerY - loopHeight;
-  const anchorY = centerY - LOOP_ANCHOR_OFFSET_Y;
-  const startX = centerX + LOOP_ANCHOR_OFFSET_X;
-  const endX = centerX - LOOP_ANCHOR_OFFSET_X;
-  const labelX = (startX + endX) / 2;
+  const loopTier = data?.loopTier ?? 0;
+  const loopHeight = BASE_LOOP_HEIGHT + loopTier * LOOP_TIER_SPACING;
+  const topY = Math.min(sourceY, targetY) - loopHeight;
+  const labelX = (sourceX + targetX) / 2;
   const labelY = topY - LABEL_OFFSET;
-  const path = `M ${startX} ${anchorY} C ${startX} ${topY}, ${endX} ${topY}, ${endX} ${anchorY}`;
+  const path = `M ${sourceX} ${sourceY} C ${sourceX} ${topY}, ${targetX} ${topY}, ${targetX} ${targetY}`;
 
   const resolvedStrokeWidth = Number.parseFloat(String(style?.strokeWidth ?? 1.6));
 

@@ -17,6 +17,8 @@ export interface BaseTransition {
   from: string;
   to: string;
   input: string;
+  sourceHandle?: string | null;
+  targetHandle?: string | null;
 }
 
 export interface FallbackTransition extends BaseTransition {

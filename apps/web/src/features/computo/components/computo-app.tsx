@@ -1,16 +1,15 @@
 import { getBuiltInExamples } from "@computo/automata-core";
-import type { BranchTree, MachineType, TransitionDefinition } from "@computo/automata-core";
+import type { MachineType, TransitionDefinition } from "@computo/automata-core";
 import { Button } from "@computo/ui/components/button";
 import { Input } from "@computo/ui/components/input";
 import {
   type Connection,
+  ConnectionMode,
   Controls,
   type Edge,
-  Handle,
   MarkerType,
   MiniMap,
   type Node,
-  type NodeProps,
   type OnEdgesChange,
   type OnNodesChange,
   Position,
@@ -42,6 +41,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { ModeToggle } from "@/components/mode-toggle";
+import { useTheme } from "@/components/theme-provider";
 
 import {
   MACHINE_ACCENT_CLASS,
@@ -49,83 +49,20 @@ import {
   formatFormalDefinition,
   getTransitionLabel,
 } from "../helpers";
+import { resolveTransitionHandles } from "../edge-routing";
 import { selectTransitionById, useComputoStore } from "../store";
 import { flowColors } from "../theme";
-import { useTheme } from "@/components/theme-provider";
+import { useBranchFlow } from "../use-branch-flow";
 
-import { InitialStateArrow } from "./initial-state-arrow";
+import { BranchNode, type BranchNodeData } from "./branch-node";
 import { SelfLoopEdge } from "./self-loop-edge";
+import { StateNode, type StateNodeData } from "./state-node";
 
 import "@xyflow/react/dist/style.css";
 
-type StateNodeData = {
-  id: string;
-  isInitial: boolean;
-  isAccepting: boolean;
-  active: boolean;
-};
-
-type BranchNodeData = {
-  label: string;
-  status: "running" | "accepted" | "rejected" | "halted";
-  stack: string[];
-};
-
-type FlowPalette = (typeof flowColors)[keyof typeof flowColors];
-
 const nodeTypes = {
-  stateNode: function StateNode({ data, selected }: NodeProps<Node<StateNodeData>>) {
-    const ringClass = data.active ? "ring-2 ring-emerald-400/70" : "";
-    const borderClass = selected ? "border-emerald-400" : "border-slate-500/60";
-    const hiddenHandleStyle = {
-      opacity: 0,
-      width: 12,
-      height: 12,
-      background: "transparent",
-      border: "none",
-    } as const;
-
-    return (
-      <div className="relative">
-        <Handle type="target" position={Position.Left} style={hiddenHandleStyle} />
-        {data.isInitial ? (
-          <InitialStateArrow
-            className="pointer-events-none absolute -left-[13px] top-1/2 -translate-y-1/2 text-computo-muted"
-            width="12"
-            height="12"
-          />
-        ) : null}
-        <div
-          className={`grid size-14 place-items-center rounded-full border-2 bg-slate-900 text-sm font-semibold text-slate-100 ${borderClass} ${ringClass}`}
-        >
-          <span>{data.id}</span>
-        </div>
-        {data.isAccepting ? (
-          <div className="pointer-events-none absolute left-1/2 top-1/2 size-11 -translate-x-1/2 -translate-y-1/2 rounded-full border border-slate-200/80" />
-        ) : null}
-        <Handle type="source" position={Position.Right} style={hiddenHandleStyle} />
-      </div>
-    );
-  },
-  branchNode: function BranchNode({ data }: NodeProps<Node<BranchNodeData>>) {
-    const statusClass =
-      data.status === "accepted"
-        ? "border-green-500/70 bg-green-500/15 text-green-300"
-        : data.status === "rejected"
-          ? "border-red-500/70 bg-red-500/15 text-red-300"
-          : data.status === "halted"
-            ? "border-yellow-500/70 bg-yellow-500/15 text-yellow-200"
-            : "border-slate-500/70 bg-slate-800/70 text-slate-100";
-
-    return (
-      <div className={`min-w-40 rounded-md border px-2 py-1 text-xs ${statusClass}`}>
-        <div className="font-semibold">{data.label}</div>
-        {data.stack.length > 0 ? (
-          <div className="mt-1 text-[10px]">Pilha: {data.stack.join(" ")}</div>
-        ) : null}
-      </div>
-    );
-  },
+  stateNode: StateNode,
+  branchNode: BranchNode,
 };
 
 const edgeTypes = {
@@ -142,67 +79,6 @@ function buildTransitionTable(type: MachineType, symbols: string[]) {
   }
 
   return [];
-}
-
-function useBranchFlow(branchTree: BranchTree | null, palette: FlowPalette) {
-  return useMemo(() => {
-    if (branchTree === null) {
-      return {
-        nodes: [] as Array<Node<BranchNodeData>>,
-        edges: [] as Edge[],
-      };
-    }
-
-    const depthGroups = new Map<number, typeof branchTree.nodes>();
-    for (const node of branchTree.nodes) {
-      const group = depthGroups.get(node.depth) ?? [];
-      group.push(node);
-      depthGroups.set(node.depth, group);
-    }
-
-    const nodes = branchTree.nodes.map((node) => {
-      const siblings = depthGroups.get(node.depth) ?? [];
-      const row = siblings.findIndex((candidate) => candidate.id === node.id);
-
-      return {
-        id: node.id,
-        type: "branchNode",
-        position: {
-          x: node.depth * 220,
-          y: row * 96,
-        },
-        data: {
-          label: node.label,
-          status: node.status,
-          stack: node.stack,
-        },
-        draggable: false,
-      } satisfies Node<BranchNodeData>;
-    });
-
-    const edges = branchTree.edges.map(
-      (edge) =>
-        ({
-          id: edge.id,
-          source: edge.source,
-          target: edge.target,
-          label: edge.label,
-          animated: false,
-          markerEnd: {
-            type: MarkerType.ArrowClosed,
-            color: palette.markerDefault,
-          },
-          style: {
-            stroke: palette.branchEdgeStroke,
-          },
-          labelStyle: {
-            fontSize: 10,
-          },
-        }) satisfies Edge,
-    );
-
-    return { nodes, edges };
-  }, [branchTree, palette]);
 }
 
 function ComputoAppInner() {
@@ -413,6 +289,7 @@ function ComputoAppInner() {
           isInitial: state.isInitial,
           isAccepting: state.isAccepting,
           active: simulation.currentStates.includes(state.id),
+          showTransitionHandles: toolMode === "transition",
         },
         draggable: toolMode !== "delete",
         selected: selectedStateId === state.id,
@@ -435,17 +312,20 @@ function ComputoAppInner() {
       for (const [index, transition] of bucket.entries()) {
         const active = simulation.lastTransitionIds.includes(transition.id);
         const isSelfLoop = transition.from === transition.to;
+        const route = resolveTransitionHandles(transition, index);
 
         edges.push({
           id: transition.id,
           source: transition.from,
           target: transition.to,
+          sourceHandle: route.sourceHandle ?? undefined,
+          targetHandle: route.targetHandle ?? undefined,
           type: isSelfLoop ? "selfLoop" : "smoothstep",
           animated: active,
           label: getTransitionLabel(automaton.type, transition),
           data: isSelfLoop
             ? {
-                loopIndex: index,
+                loopTier: route.loopTier,
               }
             : undefined,
           markerEnd: {
@@ -526,7 +406,12 @@ function ComputoAppInner() {
       if (connection.source === null || connection.target === null) {
         return;
       }
-      addTransition(connection.source, connection.target);
+      addTransition(
+        connection.source,
+        connection.target,
+        connection.sourceHandle,
+        connection.targetHandle,
+      );
     },
     [addTransition, toolMode],
   );
@@ -861,6 +746,7 @@ function ComputoAppInner() {
               onMoveEnd={(_, viewport) => {
                 setZoom(viewport.zoom);
               }}
+              connectionMode={ConnectionMode.Strict}
               fitView
               fitViewOptions={{ padding: 0.2 }}
               nodesConnectable={toolMode === "transition"}

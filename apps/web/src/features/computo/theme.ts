@@ -1,3 +1,5 @@
+export type FlowPalette = (typeof flowColors)[keyof typeof flowColors];
+
 export const flowColors = {
   light: {
     edgeStroke: "#64748b",
